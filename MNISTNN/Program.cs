@@ -24,7 +24,7 @@ namespace MNISTNN
             for (int i = 0; i < epochs; i++)
             {
                 IEnumerable<Image> batch = trainDataset.Skip(i * batchSize % (trainSize / batchSize)).Take(batchSize);
-                loss = Network.Train(batch, 0.005);
+                loss = Network.Train(batch, 0.001);
                 IEnumerable<Image> testBatch = testDataset.Skip(i * batchSize % (testSize / batchSize * 5)).Take(batchSize);
                 accuracy = Network.CalculateAccuracy(testDataset);
                 Console.WriteLine(loss + "\t" + accuracy);

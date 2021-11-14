@@ -62,11 +62,11 @@ namespace MNISTNN
                 {
                     if(i == j)
                     {
-                        output[i,j] = helper[i] * (1 - helper[i]);   
+                        output[i, j] = helper[i] * (1 - helper[i]);
                     }
                     else
                     {
-                        output[i, j] = helper[i] * helper[j];
+                        output[i, j] =-(helper[i] * helper[j]);
                     }
                 }
             }
@@ -78,8 +78,20 @@ namespace MNISTNN
             for (int i = 0; i < prediction.Length; i++)
             {
                 output += Math.Log(prediction[i]) * target[i];
+                //Console.WriteLine(Math.Log(prediction[i]));
             }
             return output * -1d;
+        }
+
+        public static double[] CrossEntropyDx(double[] input, double[] label)
+        {
+            double[] output = new double[input.Length];
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = input[i] - label[i];
+            }
+            return output;
+            
         }
         public static double VectorDot(double[] vector1, double[] vector2)
         {

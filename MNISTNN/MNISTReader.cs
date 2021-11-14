@@ -6,10 +6,10 @@ namespace MNISTNN
 {
     public static class MNISTReader
     {
-        private const string TrainImages = "C:\\Users\\olive\\source\\repos\\MNISTNN\\MNISTNN\\mnist\\train-images.idx3-ubyte";
-        private const string TrainLabels = "C:\\Users\\olive\\source\\repos\\MNISTNN\\MNISTNN\\mnist\\train-labels.idx1-ubyte";
-        private const string TestImages = "C:\\Users\\olive\\source\\repos\\MNISTNN\\MNISTNN\\mnist\\t10k-images.idx3-ubyte";
-        private const string TestLabels = "C:\\Users\\olive\\source\\repos\\MNISTNN\\MNISTNN\\mnist\\t10k-labels.idx1-ubyte";
+        private const string TrainImages = "F:\\repos\\MNISTNN\\MNISTNN\\mnist\\train-images.idx3-ubyte";
+        private const string TrainLabels = "F:\\repos\\MNISTNN\\MNISTNN\\mnist\\train-labels.idx1-ubyte";
+        private const string TestImages = "F:\\repos\\MNISTNN\\MNISTNN\\mnist\\t10k-images.idx3-ubyte";
+        private const string TestLabels = "F:\\repos\\MNISTNN\\MNISTNN\\mnist\\t10k-labels.idx1-ubyte";
 
         public static IEnumerable<Image> ReadTrainData()
         {

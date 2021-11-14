@@ -87,73 +87,68 @@ namespace MNISTNN
 
         private double GradientDescent(Image image)
         {
+            double loss;
             int i, j;
-            double loss = 0;
-            //Generating a label array from the single Label
             double[] label = new double[labelSize];
-            for (i = 0; i < labelSize; i++)
-            {
-                label[i] = (image.Label == i) ? 1d : 0d;
-                loss += Math.Pow(label[i] - output[i], 2d) / 2d;
-            }
-            //Calculating the error
-            loss = MathFunctions.CrossEntropy(output, label);
-            Console.WriteLine(loss);
 
-            //Calculating the Gradients for the weights of layer 3
-            double[] gradient3 = new double[labelSize];
-            double biasGradient = 0;
             for (i = 0; i < labelSize; i++)
             {
-                gradient3[i] = -(label[i] - output[i]);
-                biasGradient += label[i] - output[i];
+                label[i] = (i == image.Label) ? 1 : 0;
             }
-            double[,] helper3 = MathFunctions.VectorOuter(gradient3, layer2Sig);
-            for (i = 0; i< labelSize; i++)
+            loss = MathFunctions.CrossEntropy(output, label);
+
+            //Layer3
+            double[] error3 = MathFunctions.CrossEntropyDx(output, label);
+            double[,] gradient3 = MathFunctions.VectorOuter(error3, layer2Sig);
+            double bGradient3 = error3.Sum();
+            for (i = 0; i < labelSize; i++)
             {
                 for (j = 0; j < layer2Size; j++)
                 {
-                    weightsGradientl3[i, j] += helper3[i, j];
+                    weightsGradientl3[i, j] += gradient3[i, j];
                 }
-                biasGradientl3[i] -= gradient3[i];
+                biasGradientl3[i] += bGradient3;
             }
 
-            //Calculating the Gradients for the weights of layer 2
+            //Layer2
+            double[] error2 = MathFunctions.MatrixDotVector(MathFunctions.TransposeMatrix(weightsl3), error3);
+            double[] sigmoid2dx = MathFunctions.SigmoidDxVec(layer2);
             double[] gradient2 = new double[layer2Size];
-            double[] sigmoid2Dx = MathFunctions.SigmoidDxVec(layer2);
-            double[] error2Dx = MathFunctions.MatrixDotVector(MathFunctions.TransposeMatrix(weightsl3), gradient3);
             for (i = 0; i < layer2Size; i++)
             {
-                gradient2[i] = sigmoid2Dx[i] * error2Dx[i];
+                gradient2[i] = sigmoid2dx[i] * error2[i];
             }
             double[,] helper2 = MathFunctions.VectorOuter(gradient2, layer1Sig);
-            for (i = 0; i< layer2Size; i++)
+            double bGradient2 = error2.Sum();
+            for (i = 0; i < layer2Size; i++)
             {
                 for (j = 0; j < layer1Size; j++)
                 {
                     weightsGradientl2[i, j] += helper2[i, j];
                 }
-                biasGradientl2[i] += gradient2[i];
+                biasGradientl2[i] += bGradient2;
             }
 
-            //Calculating the Gradients for the weights of layer 1
+            //Layer1
+            double[] error1 = MathFunctions.MatrixDotVector(MathFunctions.TransposeMatrix(weightsl2), error2);
+            double[] sigmoid1dx = MathFunctions.SigmoidDxVec(layer1);
             double[] gradient1 = new double[layer1Size];
-            double[] sigmoid1Dx = MathFunctions.SigmoidDxVec(layer1);
-            double[] error1Dx = MathFunctions.MatrixDotVector(MathFunctions.TransposeMatrix(weightsl2), gradient2);
-            for (i = 0; i< layer1Size; i++)
+            for (i = 0; i < layer1Size; i++)
             {
-                gradient1[i] = sigmoid1Dx[i] * error1Dx[i];
+                gradient1[i] = sigmoid1dx[i] * error1[i];
             }
             double[,] helper1 = MathFunctions.VectorOuter(gradient1, input);
+            double bGradient1 = error1.Sum();
             for (i = 0; i < layer1Size; i++)
             {
                 for (j = 0; j < imageSize; j++)
                 {
                     weightsGradientl1[i, j] += helper1[i, j];
                 }
-                biasGradientl1[i] += gradient1[i];
+                biasGradientl1[i] += bGradient1;
             }
             return loss;
+            
         }
         private void UpdateNetwork(double learningRate)
         {
